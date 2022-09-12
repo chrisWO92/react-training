@@ -32,20 +32,22 @@ describe("Star Wars APP", () => {
     });
     render(<App />);
     /* We ask if it has been called 1 time */
-    expect(window.fetch).toHaveBeenCalledTimes(1);
+    expect(window.fetch).toHaveBeenCalledTimes(2);
     /* We ask if it hass been called with this path */
     expect(window.fetch).toHaveBeenCalledWith('http://swapi.dev/api/people/');
 
+    /* We ask if each one of the names requested is in this list shown in the screen. It's kinda stupid but this can improve our knowledge about testing */
     for (let character of data.results) {
       expect(await screen.findByText(character.name)).toBeInTheDocument();
     }
   });
 
-  it("should show an error mesage when has a network error", async () => {
+  it("should show an error message when has a network error", async () => {
+    /* We simulate to make a fetch and getting an error, to verify the test*/
     window.fetch.mockResolvedValueOnce(new Error("Network error"));
 
     render(<App />);
-
+    /* this "it" is implemented to verify is there is an error charging the site */
     expect(await screen.findByText("Network error")).toBeInTheDocument();
   });
 });
