@@ -1,10 +1,10 @@
 
 /* This one is the function that request data from the API.  */
 
-export async function getPeople() {
+export async function getPeople(page) {
     try {
         /* We make the call and save the data in response */
-        const response = await fetch('http://swapi.dev/api/people/');
+        const response = await fetch(`http://swapi.dev/api/people/?page=${page}`);
 
         /* In the App.test.js file we set the ok variable in true. ok is a key inside the response array, so we ask if ok is not true, we throw an error that we declare above as a class */
         if (!response.ok){

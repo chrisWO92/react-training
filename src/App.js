@@ -10,13 +10,14 @@ export function App() {
   const [currentCharacter, setCurrentCharacter] = useState(1);
   const [details, setDetails] = useState({});
   const [errorState, setErrorState] = useState({ hasError: false});
+  const [page, setPage] = useState(1);
 
   /* When the page is loaded we ask for the first 10 default characters that the API shows, and save it inside people variable */
   useEffect(() => {
-    getPeople()
-      .then((data) => setPeople(data.results))
+    getPeople(page)
+      .then(setPeople)
       .catch(handleError)
-  }, []);
+  }, [page]);
 
   /* When we click in the names of the characters shown on the screen, we can get the id of the character we're clicking. We
      ask for the info of the character and set it in the details variable */
@@ -47,8 +48,16 @@ export function App() {
     if (e.key !== "Enter") return;
     inputSearch.current.value = "";
     setDetails({});
-    searchCharacter(textSearch).then((data) => setPeople(data.results)).catch(handleError);
+    searchCharacter(textSearch).then(setPeople).catch(handleError);
   };
+
+  /* Function that changes the number of the prev next page element. It uses the page state that is updated with the useEffect hook */
+  const onChangePage = (next) => {
+    if (!people.previous && page + next <= 0) {return};
+    if (!people.next && page + next >= 9) {return};
+
+    setPage(page + next);
+  }
 
   return (
     <div>
@@ -60,10 +69,15 @@ export function App() {
       <ul className={styles.App}>
         {/* Tthis is to verify if we're having an error, so we show it in the screen */}
         {errorState.hasError && <div>{errorState.message}</div>}
-        {people.map((character) => (
+        {people?.results?.map((character) => (
           <li key={character.name} onClick={() => showDetails(character)}>{character.name}</li>
         ))}
       </ul>
+
+      <section>
+        <button onClick={() => onChangePage(-1)}>Prev</button> | {page} | <button onClick={() => onChangePage(1)}>Next</button>
+      </section>
+
       {details && (
         <aside>
         <h1>{details.name}</h1>
